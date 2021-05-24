@@ -14,7 +14,6 @@ from collections import defaultdict
 plt.style.use('seaborn-whitegrid')
 
 
-
 def read_ids(f):
 	with open(f) as inp:
 		lines = inp.readlines()
@@ -1203,11 +1202,12 @@ def exact_match(l2, references, outputs, ids):
 			correctl += cl
 			wrongl += wl
 
-	print(f"Total correct: {correct}")
-	print(f"Total wrong: {wrong}")
-	print(f"Total correct (lemma): {correctl}")
-	print(f"Total wrong (lemma): {wrongl}")
-	print(f"Accuracy Exact: {(correct + correctl) / (correct + correctl + wrong + wrongl)}")
+	print(f"Exact-Match Statistics")
+	print(f"\tTotal correct: {correct}")
+	print(f"\tTotal wrong: {wrong}")
+	print(f"\tTotal correct (lemma): {correctl}")
+	print(f"\tTotal wrong (lemma): {wrongl}")
+	print(f"Exact-Match Accuracy: {(correct + correctl) / (correct + correctl + wrong + wrongl)}")
 
 def exact_match_ENG(l2, references, outputs, ids):
 	correct = 0
@@ -1222,56 +1222,51 @@ def exact_match_ENG(l2, references, outputs, ids):
 			correctl += cl
 			wrongl += wl
 
-	print(f"Total correct: {correct}")
-	print(f"Total wrong: {wrong}")
-	print(f"Total correct (lemma): {correctl}")
-	print(f"Total wrong (lemma): {wrongl}")
-	print(f"Accuracy Exact: {(correct + correctl) / (correct + correctl + wrong + wrongl)}")
+	print(f"Exact-Match Statistics")
+	print(f"\tTotal correct: {correct}")
+	print(f"\tTotal wrong: {wrong}")
+	print(f"\tTotal correct (lemma): {correctl}")
+	print(f"\tTotal wrong (lemma): {wrongl}")
+	print(f"Exact-Match Accuracy : {(correct + correctl) / (correct + correctl + wrong + wrongl)}")
 
 def bleu(l2, references, outputs):
 	references = [references]
 	bleu = sacrebleu.corpus_bleu(outputs, references)
-	print(bleu.score)
+	print(f"BLEU score: {bleu.score}")
 
-def ter_w_shift(l2, references, outputs, test):
+def ter_w_shift(l2, references, outputs, IDS_to_exclude=[]):
 	ter = 0
 	cnt = 0
 	for i in range(len(outputs)):
-		if i == 1567 and test:
-			continue
-		if i == 2021 and not test:
+		if i in IDS_to_exclude:
 			continue
 		ter += TER.ter(outputs[i].split(), references[i].split())
 		cnt += 1
-	print(f"Accuracy TER: {1 - (ter / cnt)}")
+	print(f"1 - TER Score: {1 - (ter / cnt)}")
 
-def mod_ter_w_shift(l2, references, outputs, nonreferences, ids, lc, test):
+def mod_ter_w_shift(l2, references, outputs, nonreferences, ids, lc, IDS_to_exclude=[]):
 	ter = 0.0
-	for i, id in enumerate(ids):
-		if i == 1567 and test:
+	for i, sid in enumerate(ids):
+		if i in IDS_to_exclude:
 			continue
-		if i == 2021 and not test:
-			continue
-		if id in references:
-			ter += compare_TER_w(outputs[i], references[id], lc)
+		if sid in references:
+			ter += compare_TER_w(outputs[i], references[sid], lc)
 		else:
 			ter += TER_modified.ter(outputs[i].split(), nonreferences[i].split(), lc)
 		
-	print(f"Accuracy MOD TER: {1 - (ter / len(ids))}")
+	print(f"1 - TERm Score: {1 - (ter / len(ids))}")
 
-def mod_ter_w_shift_ENG(l2, references, outputs, nonreferences, ids, lc, test):
+def mod_ter_w_shift_ENG(l2, references, outputs, nonreferences, ids, lc, IDS_to_exclude=[]):
 	ter = 0.0
-	for i, id in enumerate(ids):
-		if i == 1567 and test:
+	for i, sid in enumerate(ids):
+		if i in IDS_to_exclude:
 			continue
-		if i == 2021 and not test:
-			continue
-		if id in references:
-			ter += compare_TER_w_ENG(outputs[i], references[id], lc)
+		if sid in references:
+			ter += compare_TER_w_ENG(outputs[i], references[sid], lc)
 		else:
 			ter += TER_modified.ter(outputs[i].split(), nonreferences[i].split(), lc)
 		
-	print(f"Accuracy MOD TER: {1 - (ter / len(ids))}")
+	print(f"1 - TERm Score: {1 - (ter / len(ids))}")
 
 def exact_alignment_match_bleu(l2, references, outputs, ids, window):
 	bleu_score = 0.0
@@ -1279,7 +1274,7 @@ def exact_alignment_match_bleu(l2, references, outputs, ids, window):
 		if id in references:
 			bleu_score += compare_exact_align_bleu(outputs[i], references[id], window)
 	
-	print(bleu_score / (len(references)))
+	print(f"Exact Alignment Match BLEU score: {bleu_score / (len(references))}")
 
 def exact_alignment_match_bleu_ENG(l2, references, outputs, ids, window):
 	bleu_score = 0.0
@@ -1287,7 +1282,7 @@ def exact_alignment_match_bleu_ENG(l2, references, outputs, ids, window):
 		if id in references:
 			bleu_score += compare_exact_align_bleu_ENG(outputs[i], references[id], window)
 	
-	print(bleu_score / (len(references)))
+	print(f"Exact Alignment Match BLEU score: {bleu_score / (len(references))}")
 
 def exact_alignment_match(l2, references, outputs, ids, window):
 	acc = 0.0
@@ -1298,7 +1293,7 @@ def exact_alignment_match(l2, references, outputs, ids, window):
 			acc1 = compare_exact_align(outputs[i], references[id], window)
 			acc += acc1
 	
-	print(acc / (len(references)))
+	print(f"Exact Alignment Match: {acc / (len(references))}")
 
 def exact_alignment_match_ENG(l2, references, outputs, ids, window):
 	acc = 0.0
@@ -1309,7 +1304,7 @@ def exact_alignment_match_ENG(l2, references, outputs, ids, window):
 			acc1 = compare_exact_align_ENG(outputs[i], references[id], window)
 			acc += acc1
 	
-	print(acc / (len(references)))
+	print(f"Exact Alignment Match: {acc / (len(references))}")
 
 def exact_window_overlap_match(l2, references, outputs, ids, window):
 	acc = 0.0
@@ -1317,11 +1312,11 @@ def exact_window_overlap_match(l2, references, outputs, ids, window):
 		if id in references:
 			if outputs[i] != "":
 				acc1 = compare_exact_window_overlap(outputs[i], references[id], window)
-			if acc1 > 1:
-				print("yo")
+			#if acc1 > 1:
+			#	print("yo")
 			acc += acc1
 	
-	print(acc / (len(references)))
+	print(f"\tExact Window Overlap Accuracy: {acc / (len(references))}")
 
 def exact_window_overlap_match_ENG(l2, references, outputs, ids, window):
 	acc = 0.0
@@ -1333,7 +1328,7 @@ def exact_window_overlap_match_ENG(l2, references, outputs, ids, window):
 				print("yo")
 			acc += acc1
 	
-	print(acc / (len(references)))
+	print(f"\tExact Window Overlap Accuracy: {acc / (len(references))}")
 
 def exact_alignment_match_UD(l2, references, outputs, ids):
 	acc = 0.0
@@ -1341,7 +1336,7 @@ def exact_alignment_match_UD(l2, references, outputs, ids):
 		if id in references:
 			acc += compare_exact_align_UD(outputs[i], references[id])
 	
-	print(acc / (len(references)))
+	print(f"Exact Match over UD Window Accuracy {acc / (len(references))}")
 
 def exact_alignment_match_UD_ENG(l2, references, outputs, ids):
 	acc = 0.0
@@ -1349,23 +1344,23 @@ def exact_alignment_match_UD_ENG(l2, references, outputs, ids):
 		if id in references:
 			acc += compare_exact_align_UD_ENG(outputs[i], references[id])
 	
-	print(acc / (len(references)))
+	print(f"Exact Match over UD Window Accuracy {acc / (len(references))}")
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--language", help="language of the file", type=str, default="")
-parser.add_argument("--in_directory", help="directory where input is located", type=str, default="")
+parser.add_argument("--language", help="target language", type=str, default="")
+parser.add_argument("--hypothesis", help="hypothesis file", type=str, default="")
 parser.add_argument("--unmodified_ref_directory", help="directory where output will be saved", type=str, default="")
 parser.add_argument("--id_directory", help="directory where id is located", type=str, default="")
 parser.add_argument("--modified_ref_directory", help="directory where ref is located", type=str, default="")
-parser.add_argument("--BLEU", help="", type=str, default="False")
-parser.add_argument("--EXACT_MATCH", help="", type=str, default="False")
+parser.add_argument("--BLEU", help="", type=str, default="True")
+parser.add_argument("--EXACT_MATCH", help="", type=str, default="True")
+parser.add_argument("--MOD_TER", help="", type=str, default="True")
+parser.add_argument("--WINDOW_OVERLAP", help="", type=str, default="True")
 parser.add_argument("--TER", help="", type=str, default="False")
-parser.add_argument("--MOD_TER", help="", type=str, default="False")
 parser.add_argument("--ALIGN_EXACT", help="", type=str, default="False")
 parser.add_argument("--ALIGN_BLEU", help="", type=str, default="False")
 parser.add_argument("--ALIGN_UD", help="", type=str, default="False")
-parser.add_argument("--WINDOW_OVERLAP", help="", type=str, default="False")
 args = parser.parse_args()
 
 l2 = args.language
@@ -1380,11 +1375,13 @@ try:
 	l2_stanza = stanza.Pipeline(processors='tokenize,pos,lemma,depparse', lang=l2, use_gpu=True, tokenize_pretokenized=True)
 	SUPPORTED = True
 except:
+	print(f"Language {l2} does not seem to be supported by Stanza -- or something went wrong with downloading the models.")
+	print(f"Will continue without searching over lemmatized versions of the data.")
 	SUPPORTED = False
 
 
 ids = read_ids(args.id_directory)
-outputs = read_outputs(args.in_directory)
+outputs = read_outputs(args.hypothesis)
 sentreferences = read_outputs(args.unmodified_ref_directory)
 if l2 != "en":
 	exactreferences = read_reference_data(args.modified_ref_directory)
@@ -1393,14 +1390,14 @@ if l2 != "en":
 	if args.EXACT_MATCH == "True":
 		exact_match(l2, exactreferences, outputs, ids)
 	if args.WINDOW_OVERLAP == "True":
-		print("Accuracy Window Overlap:")
+		print("Window Overlap Accuracy :")
 		for window in windows:
-			print(f"Window {window}:")
+			print(f"\tWindow {window}:")
 			exact_window_overlap_match(l2, exactreferences, outputs, ids, window)
 	if args.TER == "True":
-		ter_w_shift(l2, sentreferences, outputs, len(ids) == 2100)
+		ter_w_shift(l2, sentreferences, outputs)
 	if args.MOD_TER == "True":
-		mod_ter_w_shift(l2, exactreferences, outputs, sentreferences, ids, 2, len(ids) == 2100)
+		mod_ter_w_shift(l2, exactreferences, outputs, sentreferences, ids, 2)
 	if args.ALIGN_EXACT == "True":
 		print("Accuracy Alignment Exact Order:")
 		for window in windows:
@@ -1421,14 +1418,14 @@ else:
 	if args.EXACT_MATCH == "True":
 		exact_match_ENG(l2, exactreferences, outputs, ids)
 	if args.WINDOW_OVERLAP == "True":
-		print("Accuracy Window Overlap:")
+		print("Window Overlap Accuracy:")
 		for window in windows:
-			print(f"Window {window}:")
+			print(f"\tWindow {window}:")
 			exact_window_overlap_match_ENG(l2, exactreferences, outputs, ids, window)
 	if args.TER == "True":
-		ter_w_shift(l2, sentreferences, outputs, len(ids) == 2100)
+		ter_w_shift(l2, sentreferences, outputs, [])
 	if args.MOD_TER == "True":
-		mod_ter_w_shift_ENG(l2, exactreferences, outputs, sentreferences, ids, 2, len(ids) == 2100)
+		mod_ter_w_shift_ENG(l2, exactreferences, outputs, sentreferences, ids, 2)
 	if args.ALIGN_EXACT == "True":
 		print("Accuracy Alignment Exact Order:")
 		for window in windows:
