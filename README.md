@@ -20,32 +20,30 @@ List of requirements:
   7. **numpy**
 
 ## Code
-The main script is `evaluate_term.py` that receives the following arguments:
+The main script is `evaluate_term_wmt.py` that receives the following arguments:
 
   1. --language - The language code (eg. fr for French) of the target language.
-  2. --hypothesis - This is the hypothesis file. Example file: `data/en-fr.hyp.txt.truecased`.
-  3. --unmodified_ref_directory - This is a file with the references. An example file is provided at `data/unmodified_refs/all.fr.tsv.truecased.updated`.
-  4. --id_directory - This is a file which contains the ids of each sentence of the reference file. Example: `data/ids/all.ids.txt`.
-  5. --modified_ref_directory - This is a file containing target references with additional term information. Example file: `data/modified_refs/exact.en-fr.all.updated.txt`.
-  6. --BLEU [True/False]. By default True. If True shows BLEU score.
-  7. --EXACT_MATCH [True/False]. By default True. If True shows Exact Match score.
-  8. --MOD_TER [True/False]. By default True. If True shows TERm score.
-  9. --WINDOW_OVERLAP [True/False]. By default True. If True shows Window Overlap Score.
-  10. --TER [True/False]. By default False. If True shows TER score.
-  11. --ALIGN_EXACT [True/False]. By default False. If True shows that result.
-  12. --ALIGN_BLEU [True/False]. By default False. If True shows that result.
-  13. --ALIGN_UD [True/False]. By default False. If True shows that result.
+  2. --hypothesis - This is the hypothesis file. Example file: `data/en-fr.hyp.txt.truecased.xml`.
+  3. --source_ref_directory - This is a file with the source references. An example file is provided at `data/all.en-fr.en.xml`
+  4. --target_ref_directory - This is a file with the target references. An example file is provided at `data/all.en-fr.fr.xml`
+  5. --BLEU [True/False]. By default True. If True shows BLEU score.
+  6. --EXACT_MATCH [True/False]. By default True. If True shows Exact Match score.
+  7. --MOD_TER [True/False]. By default True. If True shows TERm score.
+  8. --WINDOW_OVERLAP [True/False]. By default True. If True shows Window Overlap Score.
+  9. --TER [True/False]. By default False. If True shows TER score.
+  10. --ALIGN_EXACT [True/False]. By default False. If True shows that result.
+  11. --ALIGN_BLEU [True/False]. By default False. If True shows that result.
+  12. --ALIGN_UD [True/False]. By default False. If True shows that result.
   
 
 ## Example
 You can test that your metrics work by running the following command on the sample data we provide.
 ~~~
-python3 evaluate_term.py \
-    --language fr  \
-    --in_directory data/en-fr.hyp.txt.truecased \
-    --unmodified_ref_directory data/unmodified_refs/all.fr.tsv.truecased.updated \
-    --id_directory data/ids/all.ids.txt  \
-    --modified_ref_directory data/modified_refs/exact.en-fr.all.updated.txt \
+python3 evaluate_term_wmt.py \
+    --language fr \
+    --hypothesis data/en-fr.hyp.txt.truecased.xml \
+    --source_ref_directory data/all.en-fr.en.xml \
+    --target_ref_directory data/all.en-fr.fr.xml \
 ~~~
 Running the above command will:
 * Download the French Stanza models, if they are not available locally already
@@ -53,16 +51,17 @@ Running the above command will:
 ~~~
 BLEU score: 46.097223339855816
 Exact-Match Statistics
-  Total correct: 2607
-  Total wrong: 903
-  Total correct (lemma): 340
-  Total wrong (lemma): 66
-Exact-Match Accuracy: 0.7525536261491318
+        Total correct: 2386
+        Total wrong: 704
+        Total correct (lemma): 0
+        Total wrong (lemma): 234
+Exact-Match Accuracy: 0.7178098676293622
 Window Overlap Accuracy :
-  Window 2:
-  Exact Window Overlap Accuracy: 0.5932386427306287
-  Window 3:
-  Exact Window Overlap Accuracy: 0.5759241927272842
+        Window 2:
+        Exact Window Overlap Accuracy: 0.3068392941133903
+        Window 3:
+        Exact Window Overlap Accuracy: 0.29947678745871537
+1 - TERm Score: 0.5981857378665372
 
 ~~~
 
