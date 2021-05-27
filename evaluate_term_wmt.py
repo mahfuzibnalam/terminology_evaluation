@@ -1542,8 +1542,8 @@ def exact_alignment_match_UD_ENG(l2, references, outputs, ids):
 parser = argparse.ArgumentParser()
 parser.add_argument("--language", help="target language", type=str, default="")
 parser.add_argument("--hypothesis", help="hypothesis file", type=str, default="")
-parser.add_argument("--source_ref_directory", help="directory where output will be saved", type=str, default="")
-parser.add_argument("--target_ref_directory", help="directory where output will be saved", type=str, default="")
+parser.add_argument("--source", help="directory where output will be saved", type=str, default="")
+parser.add_argument("--target_reference", help="directory where output will be saved", type=str, default="")
 parser.add_argument("--BLEU", help="", type=str, default="True")
 parser.add_argument("--EXACT_MATCH", help="", type=str, default="True")
 parser.add_argument("--MOD_TER", help="", type=str, default="True")
@@ -1555,7 +1555,7 @@ parser.add_argument("--ALIGN_UD", help="", type=str, default="False")
 args = parser.parse_args()
 
 l2 = args.language
-windows = [2, 3]	
+windows = [2, 3]
 model = transformers.BertModel.from_pretrained('bert-base-multilingual-cased')
 tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-multilingual-cased')
 
@@ -1573,7 +1573,7 @@ except:
 
 ids, outputs = read_outputs_wmt(args.hypothesis)
 if l2 != "en":
-	sentreferences, exactreferences = read_reference_data_wmt(args.target_ref_directory, args.source_ref_directory)
+	sentreferences, exactreferences = read_reference_data_wmt(args.target_reference, args.source)
 	if args.BLEU == "True":
 		bleu(l2, sentreferences, outputs)
 	if args.EXACT_MATCH == "True":
@@ -1601,7 +1601,7 @@ if l2 != "en":
 		print("Accuracy Alignment UD:")
 		exact_alignment_match_UD(l2, exactreferences, outputs, ids)
 else:
-	sentreferences, exactreferences = read_reference_data_wmt_ENG(args.source_ref_directory, args.target_ref_directory)
+	sentreferences, exactreferences = read_reference_data_wmt_ENG(args.source, args.target_reference)
 	if args.BLEU == "True":
 		bleu(l2, sentreferences, outputs)
 	if args.EXACT_MATCH == "True":
