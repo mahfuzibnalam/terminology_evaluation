@@ -23,9 +23,9 @@ List of requirements:
 The main script is `evaluate_term_wmt.py` that receives the following arguments:
 
   1. --language - The language code (eg. fr for French) of the target language.
-  2. --hypothesis - This is the hypothesis file. Example file: `data/en-fr.hyp.txt.truecased.xml`.
-  3. --source_ref_directory - This is a file with the source references. An example file is provided at `data/all.en-fr.en.xml`
-  4. --target_ref_directory - This is a file with the target references. An example file is provided at `data/all.en-fr.fr.xml`
+  2. --hypothesis - This is the hypothesis file. Example file: `data/en-fr.dev.txt.truecased.xml`.
+  3. --source - This is a file with the source references. An example file is provided at `data/dev.en-fr.en.xml`
+  4. --target_reference - This is a file with the target references. An example file is provided at `data/dev.en-fr.fr.xml`
   5. --BLEU [True/False]. By default True. If True shows BLEU score.
   6. --EXACT_MATCH [True/False]. By default True. If True shows Exact Match score.
   7. --MOD_TER [True/False]. By default True. If True shows TERm score.
@@ -41,27 +41,27 @@ You can test that your metrics work by running the following command on the samp
 ~~~
 python3 evaluate_term_wmt.py \
     --language fr \
-    --hypothesis data/en-fr.hyp.txt.truecased.xml \
-    --source_ref_directory data/all.en-fr.en.xml \
-    --target_ref_directory data/all.en-fr.fr.xml \
+    --hypothesis data/en-fr.dev.txt.truecased.xml \
+    --source_ref_directory data/dev.en-fr.en.xml \
+    --target_ref_directory data/dev.en-fr.fr.xml \
 ~~~
 Running the above command will:
 * Download the French Stanza models, if they are not available locally already
 * Compute four metrics and print the following:
 ~~~
-BLEU score: 46.097223339855816
+BLEU score: 45.33867641150976
 Exact-Match Statistics
-        Total correct: 2386
-        Total wrong: 704
+        Total correct: 661
+        Total wrong: 195
         Total correct (lemma): 0
-        Total wrong (lemma): 234
-Exact-Match Accuracy: 0.7178098676293622
+        Total wrong (lemma): 45
+Exact-Match Accuracy: 0.7336293007769146
 Window Overlap Accuracy :
         Window 2:
-        Exact Window Overlap Accuracy: 0.3068392941133903
+        Exact Window Overlap Accuracy: 0.2882867032841286
         Window 3:
-        Exact Window Overlap Accuracy: 0.29947678745871537
-1 - TERm Score: 0.5981857378665372
+        Exact Window Overlap Accuracy: 0.2823137658771028
+1 - TERm Score: 0.5976419967509046
 
 ~~~
 
