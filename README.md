@@ -51,16 +51,16 @@ Running the above command will:
 ~~~
 BLEU score: 45.33867641150976
 Exact-Match Statistics
-        Total correct: 661
-        Total wrong: 195
-        Total correct (lemma): 0
-        Total wrong (lemma): 45
-Exact-Match Accuracy: 0.7336293007769146
+        Total correct: 662
+        Total wrong: 196
+        Total correct (lemma): 40
+        Total wrong (lemma): 3
+Exact-Match Accuracy: 0.779134295227525
 Window Overlap Accuracy :
         Window 2:
-        Exact Window Overlap Accuracy: 0.2882867032841286
+        Exact Window Overlap Accuracy: 0.29693757867032844
         Window 3:
-        Exact Window Overlap Accuracy: 0.2823137658771028
+        Exact Window Overlap Accuracy: 0.2907071747339513
 1 - TERm Score: 0.5976419967509046
 
 ~~~
