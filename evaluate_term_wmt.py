@@ -135,7 +135,9 @@ def read_reference_data_wmt(lt, ls):
 				if "tgt_original" in doct['seg']['term']['@type']:
 					terms.append(f"{docs['seg']['term']['#text']} ||| {src_ids} --> {doct['seg']['term']['#text']} ||| {tgt_ids}")
 				if "tgt_lemma" in doct['seg']['term']['@type']:
-					terms_l.append(f"{docs['seg']['term']['#text']} ||| {src_ids} --> {doct['seg']['term']['#text']} ||| {tgt_ids}")
+					doc_f = l2_stanza(doct['seg']['term']['#text'])
+					lemma = ' '.join([w.lemma for w in doc_f.sentences[0].words])
+					terms_l.append(f"{docs['seg']['term']['#text']} ||| {src_ids} --> {lemma} ||| {tgt_ids}")
 			elif 'term' in doct['seg']:
 				for index in range(len(doct['seg']['term'])):
 					src_start = source_tokens.index(docs['seg']['term'][index]['#text'].split()[0])
@@ -153,7 +155,9 @@ def read_reference_data_wmt(lt, ls):
 					if "tgt_original" in doct['seg']['term'][index]['@type']:
 						terms.append(f"{docs['seg']['term'][index]['#text']} ||| {src_ids} --> {doct['seg']['term'][index]['#text']} ||| {tgt_ids}")
 					if "tgt_lemma" in doct['seg']['term'][index]['@type']:
-						terms_l.append(f"{docs['seg']['term'][index]['#text']} ||| {src_ids} --> {doct['seg']['term'][index]['#text']} ||| {tgt_ids}")
+						doc_f = l2_stanza(doct['seg']['term'][index]['#text'])
+						lemma = ' '.join([w.lemma for w in doc_f.sentences[0].words])
+						terms_l.append(f"{docs['seg']['term'][index]['#text']} ||| {src_ids} --> {lemma} ||| {tgt_ids}")
 			refs[id] = (source, target, terms, terms_l)
 
 	outputs = []
@@ -229,7 +233,9 @@ def read_reference_data_wmt_ENG(lt, ls):
 				if "src_original" in doct['seg']['term']['@type']:
 					terms.append(f"{docs['seg']['term']['#text']} ||| {src_ids} --> {doct['seg']['term']['#text']} ||| {tgt_ids}")
 				if "src_lemma" in doct['seg']['term']['@type']:
-					terms_l.append(f"{docs['seg']['term']['#text']} ||| {src_ids} --> {doct['seg']['term']['#text']} ||| {tgt_ids}")
+					doc_f = l2_stanza(doct['seg']['term']['#text'])
+					lemma = ' '.join([w.lemma for w in doc_f.sentences[0].words])
+					terms_l.append(f"{docs['seg']['term']['#text']} ||| {src_ids} --> {lemma} ||| {tgt_ids}")
 			elif 'term' in doct['seg']:
 				for index in range(len(doct['seg']['term'])):
 					src_start = source_tokens.index(docs['seg']['term'][index]['#text'].split()[0])
@@ -247,7 +253,9 @@ def read_reference_data_wmt_ENG(lt, ls):
 					if "src_original" in doct['seg']['term'][index]['@type']:
 						terms.append(f"{docs['seg']['term'][index]['#text']} ||| {src_ids} --> {doct['seg']['term'][index]['#text']} ||| {tgt_ids}")
 					if "src_lemma" in doct['seg']['term'][index]['@type']:
-						terms_l.append(f"{docs['seg']['term'][index]['#text']} ||| {src_ids} --> {doct['seg']['term'][index]['#text']} ||| {tgt_ids}")
+						doc_f = l2_stanza(doct['seg']['term'][index]['#text'])
+						lemma = ' '.join([w.lemma for w in doc_f.sentences[0].words])
+						terms_l.append(f"{docs['seg']['term'][index]['#text']} ||| {src_ids} --> {lemma} ||| {tgt_ids}")
 			refs[id] = (source, target, terms, terms_l)
 	
 	outputs = []
