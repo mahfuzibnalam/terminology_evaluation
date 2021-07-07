@@ -5,10 +5,7 @@ import string
 import argparse
 import sacrebleu
 import TER_modified
-import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
-from collections import defaultdict
-plt.style.use('seaborn-whitegrid')
 
 
 def read_reference_data_wmt(lt, ls):
