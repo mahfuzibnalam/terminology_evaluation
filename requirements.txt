@@ -1,7 +1,4 @@
-torch
 stanza
 argparse
-itertools
 sacrebleu
-transformers
-numpy
+beautifulsoup4
