@@ -11,29 +11,23 @@ pip install -r requirements.txt
 ~~~
 
 List of requirements:
-  1. **torch**
-  2. **stanza**
-  3. **argparse**
-  4. **itertools**
-  5. **sacrebleu**
-  6. **transformers**
-  7. **numpy**
+  1. **stanza**
+  2. **argparse**
+  3. **sacrebleu**
+  4. **bs4**
 
 ## Code
 The main script is `evaluate_term_wmt.py` that receives the following arguments:
 
   1. --language - The language code (eg. fr for French) of the target language.
-  2. --hypothesis - This is the hypothesis file. Example file: `data/en-fr.dev.txt.truecased.xml`.
-  3. --source - This is a file with the source references. An example file is provided at `data/dev.en-fr.en.xml`
-  4. --target_reference - This is a file with the target references. An example file is provided at `data/dev.en-fr.fr.xml`
+  2. --hypothesis - This is the hypothesis file. Example file: `data/en-fr.dev.txt.truecased.sgm`.
+  3. --source - This is a file with the source references. An example file is provided at `data/dev.en-fr.en.sgm`
+  4. --target_reference - This is a file with the target references. An example file is provided at `data/dev.en-fr.fr.sgm`
   5. --BLEU [True/False]. By default True. If True shows BLEU score.
   6. --EXACT_MATCH [True/False]. By default True. If True shows Exact Match score.
-  7. --MOD_TER [True/False]. By default True. If True shows TERm score.
-  8. --WINDOW_OVERLAP [True/False]. By default True. If True shows Window Overlap Score.
+  7. --WINDOW_OVERLAP [True/False]. By default True. If True shows Window Overlap Score.
+  8. --MOD_TER [True/False]. By default True. If True shows TERm score.
   9. --TER [True/False]. By default False. If True shows TER score.
-  10. --ALIGN_EXACT [True/False]. By default False. If True shows that result.
-  11. --ALIGN_BLEU [True/False]. By default False. If True shows that result.
-  12. --ALIGN_UD [True/False]. By default False. If True shows that result.
   
 
 ## Example
@@ -41,9 +35,9 @@ You can test that your metrics work by running the following command on the samp
 ~~~
 python3 evaluate_term_wmt.py \
     --language fr \
-    --hypothesis data/en-fr.dev.txt.truecased.xml \
-    --source data/dev.en-fr.en.xml \
-    --target_ref_directory data/dev.en-fr.fr.xml \
+    --hypothesis data/en-fr.dev.txt.truecased.sgm \
+    --source data/dev.en-fr.en.sgm \
+    --target_reference data/dev.en-fr.fr.sgm
 ~~~
 Running the above command will:
 * Download the French Stanza models, if they are not available locally already
@@ -51,17 +45,17 @@ Running the above command will:
 ~~~
 BLEU score: 45.33867641150976
 Exact-Match Statistics
-        Total correct: 662
-        Total wrong: 196
-        Total correct (lemma): 40
-        Total wrong (lemma): 3
-Exact-Match Accuracy: 0.779134295227525
+        Total correct: 759
+        Total wrong: 127
+        Total correct (lemma): 15
+        Total wrong (lemma): 0
+Exact-Match Accuracy: 0.8590455049944506
 Window Overlap Accuracy :
         Window 2:
         Exact Window Overlap Accuracy: 0.29693757867032844
         Window 3:
         Exact Window Overlap Accuracy: 0.2907071747339513
-1 - TERm Score: 0.5976419967509046
+1 - TERm Score: 0.5976316319523398
 
 ~~~
 
