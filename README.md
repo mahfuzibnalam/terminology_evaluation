@@ -42,7 +42,7 @@ You can test that your metrics work by running the following command on the samp
 python3 evaluate_term_wmt.py \
     --language fr \
     --hypothesis data/en-fr.dev.txt.truecased.xml \
-    --source_ref_directory data/dev.en-fr.en.xml \
+    --source data/dev.en-fr.en.xml \
     --target_ref_directory data/dev.en-fr.fr.xml \
 ~~~
 Running the above command will:
