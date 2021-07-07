@@ -15,6 +15,7 @@ List of requirements:
   2. **argparse**
   3. **sacrebleu**
   4. **bs4**
+  5. **lxml** (need it for mac)
 
 ## Code
 The main script is `evaluate_term_wmt.py` that receives the following arguments:
