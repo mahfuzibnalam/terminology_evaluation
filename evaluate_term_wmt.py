@@ -86,7 +86,10 @@ def compare_EXACT(hyp, ref):
 
 	if SUPPORTED:
 		doc_f = l2_stanza(hyp)
-		hyp_l = ' ' + ' '.join([w.lemma for w in doc_f.sentences[0].words]) + ' '
+		try:
+			hyp_l = ' ' + ' '.join([w.lemma for w in doc_f.sentences[0].words]) + ' '
+		except:
+			hyp_l = ""
 
 	count_correct = 0
 	count_wrong = 0
