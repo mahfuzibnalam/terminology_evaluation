@@ -6,6 +6,7 @@ import argparse
 import sacrebleu
 import TER_modified
 from bs4 import BeautifulSoup
+import numpy as np
 
 
 def read_reference_data_wmt(lt, ls):
@@ -15,6 +16,7 @@ def read_reference_data_wmt(lt, ls):
 		liness = inp.readlines()
 
 	refs = {}
+	sources = []
 	outputs = []
 	for idx in range(len(liness)):
 		linet = linest[idx]
@@ -29,6 +31,7 @@ def read_reference_data_wmt(lt, ls):
 
 			source = " " + " ".join(source_tokens) + " "
 			target = " " + " ".join(target_tokens) + " "
+			sources.append(source)
 			outputs.append(target)
 
 			terms = []
@@ -65,7 +68,7 @@ def read_reference_data_wmt(lt, ls):
 						terms_l.append(f"{src_terms[ids].text} ||| {src_ids} --> {tgt_lemma} ||| {tgt_ids}")
 			refs[id] = (source, target, terms, terms_l, mod_terms)
 
-	return outputs, refs
+	return sources, outputs, refs
 
 def read_outputs_wmt(f):
 	with open(f) as inp:
@@ -161,6 +164,8 @@ def compare_exact_window_overlap(hyp, ref, window):
 	matched = 0
 
 	hyp_tokens = hyp.strip().split()
+	if not hyp_tokens:
+		return 0.0
 	reference_tokens = reference.strip().split()
 	desireds = {}
 	for t in terms:
@@ -291,7 +296,7 @@ def compare_exact_window_overlap(hyp, ref, window):
 
 
 
-def exact_match(l2, references, outputs, ids):
+def exact_match(l2, references, outputs, ids, LOG):
 	correct = 0
 	wrong = 0
 	correctl = 0
@@ -310,13 +315,41 @@ def exact_match(l2, references, outputs, ids):
 	print(f"\tTotal correct (lemma): {correctl}")
 	print(f"\tTotal wrong (lemma): {wrongl}")
 	print(f"Exact-Match Accuracy: {(correct + correctl) / (correct + correctl + wrong + wrongl)}")
+	with open(LOG, 'a') as op:
+		op.write(f"Exact-Match Statistics\n")
+		op.write(f"\tTotal correct: {correct}\n")
+		op.write(f"\tTotal wrong: {wrong}\n")
+		op.write(f"\tTotal correct (lemma): {correctl}\n")
+		op.write(f"\tTotal wrong (lemma): {wrongl}\n")
+		op.write(f"Exact-Match Accuracy: {(correct + correctl) / (correct + correctl + wrong + wrongl)}\n")
 
-def bleu(l2, references, outputs):
+def comet(l2, sources, outputs, references, LOG):
+	from comet.models import download_model
+	model = download_model("wmt-large-da-estimator-1719", "comet_models/")
+	#references = [references
+	data = {"src": sources, "mt": outputs, "ref": references}
+	print(data['src'][:10])
+	print(data['mt'][:10])
+	print(data['ref'][:10])
+	data = [dict(zip(data, t)) for t in zip(*data.values())]
+	temp = model.predict(data, cuda=False, show_progress=True)
+	comet_score = np.mean(temp[1])
+	print(f"All comment values: {temp[1]}\n")
+	print(f"COMET score: {comet_score}\n")
+	with open(LOG, 'a') as op:
+		op.write(f"All comment values: {temp[1]}\n")
+		op.write(f"COMET score: {comet_score}\n")
+
+
+def bleu(l2, references, outputs, LOG):
 	references = [references]
 	bleu_score = sacrebleu.corpus_bleu(outputs, references)
 	print(f"BLEU score: {bleu_score.score}")
+	with open(LOG, 'a') as op:
+		op.write(f"BLEU score: {bleu_score.score}\n")
 
-def ter_w_shift(l2, references, outputs, IDS_to_exclude=[]):
+
+def ter_w_shift(l2, references, outputs, IDS_to_exclude=[], LOG=None):
 	ter = 0
 	cnt = 0
 	for i in range(len(outputs)):
@@ -325,8 +358,11 @@ def ter_w_shift(l2, references, outputs, IDS_to_exclude=[]):
 		ter += TER.ter(outputs[i].split(), references[i].split())
 		cnt += 1
 	print(f"1 - TER Score: {1 - (ter / cnt)}")
+	with open(LOG, 'a') as op:
+		op.write(f"1 - TER Score: {1 - (ter / cnt)}\n")
 
-def mod_ter_w_shift(l2, references, outputs, nonreferences, ids, lc, IDS_to_exclude=[]):
+
+def mod_ter_w_shift(l2, references, outputs, nonreferences, ids, lc, IDS_to_exclude=[], LOG=''):
 	ter = 0.0
 	for i, sid in enumerate(ids):
 		if i in IDS_to_exclude:
@@ -337,8 +373,11 @@ def mod_ter_w_shift(l2, references, outputs, nonreferences, ids, lc, IDS_to_excl
 			ter += TER_modified.ter(outputs[i].split(), nonreferences[i].split(), lc)
 		
 	print(f"1 - TERm Score: {1 - (ter / len(ids))}")
+	with open(LOG, 'a') as op:
+		op.write(f"1 - TER Score: {1 - (ter / len(ids))}\n")
 
-def exact_window_overlap_match(l2, references, outputs, ids, window):
+
+def exact_window_overlap_match(l2, references, outputs, ids, window, LOG):
 	acc = 0.0
 	for i, id in enumerate(ids):
 		if id in references:
@@ -347,6 +386,8 @@ def exact_window_overlap_match(l2, references, outputs, ids, window):
 			acc += acc1
 	
 	print(f"\tExact Window Overlap Accuracy: {acc / (len(references))}")
+	with open(LOG, 'a') as op:
+		op.write(f"\tExact Window Overlap Accuracy: {acc / (len(references))}")
 
 
 
@@ -355,7 +396,9 @@ parser.add_argument("--language", help="target language", type=str, default="")
 parser.add_argument("--hypothesis", help="hypothesis file", type=str, default="")
 parser.add_argument("--source", help="directory where source side sgm file is located", type=str, default="")
 parser.add_argument("--target_reference", help="directory where target side sgm file is located", type=str, default="")
+parser.add_argument("--log", help="to write all outputs", type=str, default="")
 parser.add_argument("--BLEU", help="", type=str, default="True")
+parser.add_argument("--COMET", help="", type=str, default="False")
 parser.add_argument("--EXACT_MATCH", help="", type=str, default="True")
 parser.add_argument("--WINDOW_OVERLAP", help="", type=str, default="True")
 parser.add_argument("--MOD_TER", help="", type=str, default="True")
@@ -364,6 +407,8 @@ args = parser.parse_args()
 
 l2 = args.language
 windows = [2, 3]
+
+LOG = args.log
 
 SUPPORTED = False
 try:
@@ -377,17 +422,23 @@ except:
 
 ids, outputs = read_outputs_wmt(args.hypothesis)
 if l2 != "en":
-	sentreferences, exactreferences = read_reference_data_wmt(args.target_reference, args.source)
+	sources, sentreferences, exactreferences = read_reference_data_wmt(args.target_reference, args.source)
 	if args.BLEU == "True":
-		bleu(l2, sentreferences, outputs)
+		bleu(l2, sentreferences, outputs, LOG)
+	if args.COMET == "True":
+		comet(l2, sources, outputs, sentreferences, LOG)
 	if args.EXACT_MATCH == "True":
-		exact_match(l2, exactreferences, outputs, ids)
+		exact_match(l2, exactreferences, outputs, ids, LOG)
 	if args.WINDOW_OVERLAP == "True":
 		print("Window Overlap Accuracy :")
+		with open(LOG, 'a') as op:
+			op.write("Window Overlap Accuracy :\n")
 		for window in windows:
 			print(f"\tWindow {window}:")
-			exact_window_overlap_match(l2, exactreferences, outputs, ids, window)
+			with open(LOG, 'a') as op:
+				op.write("Window Overlap Accuracy :\n")
+			exact_window_overlap_match(l2, exactreferences, outputs, ids, window, LOG)
 	if args.MOD_TER == "True":
-		mod_ter_w_shift(l2, exactreferences, outputs, sentreferences, ids, 2)
+		mod_ter_w_shift(l2, exactreferences, outputs, sentreferences, ids, 2, [], LOG)
 	if args.TER == "True":
 		ter_w_shift(l2, sentreferences, outputs)
