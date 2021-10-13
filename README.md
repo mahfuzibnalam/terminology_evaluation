@@ -62,3 +62,27 @@ Window Overlap Accuracy :
 
 Notes: 
 * The computation of TER or TERm can take quite some time if your data has very long sentences.
+
+# Publications
+Please cite this papers:
+~~~
+@article{DBLP:journals/corr/abs-2106-11891,
+  author    = {Md Mahfuz Ibn Alam and
+               Antonios Anastasopoulos and
+               Laurent Besacier and
+               James Cross and
+               Matthias Gall{\'{e}} and
+               Philipp Koehn and
+               Vassilina Nikoulina},
+  title     = {On the Evaluation of Machine Translation for Terminology Consistency},
+  journal   = {CoRR},
+  volume    = {abs/2106.11891},
+  year      = {2021},
+  url       = {https://arxiv.org/abs/2106.11891},
+  eprinttype = {arXiv},
+  eprint    = {2106.11891},
+  timestamp = {Wed, 30 Jun 2021 16:14:10 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2106-11891.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+~~~
