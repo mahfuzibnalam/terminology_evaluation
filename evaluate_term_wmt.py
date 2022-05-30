@@ -37,11 +37,11 @@ def read_reference_data_wmt(lt, ls):
 			terms = []
 			terms_l = []
 			mod_terms = []
-			src_terms = soups.find_all('term')
 			tgt_terms = soupt.find_all('term')
 			for ids, item in enumerate(tgt_terms):
-				src_start = source_tokens.index(src_terms[ids].text.split()[0])
-				src_end = source_tokens.index(src_terms[ids].text.split()[-1])
+				src_term = soups.find('term', id=item['id'])
+				src_start = source_tokens.index(src_term.text.split()[0])
+				src_end = source_tokens.index(src_term.text.split()[-1])
 				src_ids = ""
 				for ind in range(src_start, src_end - 1):
 					src_ids += (str)(ind) + ","
@@ -57,15 +57,15 @@ def read_reference_data_wmt(lt, ls):
 				tgt_term = item['tgt']
 				if item.text.strip() not in tgt_term:
 					tgt_term = item['tgt'] + "|" + item.text.strip()
-				mod_terms.append(f"{src_terms[ids].text} ||| {src_ids} --> {tgt_term} ||| {tgt_ids}")
+				mod_terms.append(f"{src_term.text} ||| {src_ids} --> {tgt_term} ||| {tgt_ids}")
 
 				if "tgt_original" in tgt_terms[ids]['type']:
-					terms.append(f"{src_terms[ids].text} ||| {src_ids} --> {tgt_terms[ids].text} ||| {tgt_ids}")
+					terms.append(f"{src_term.text} ||| {src_ids} --> {tgt_terms[ids].text} ||| {tgt_ids}")
 				if "tgt_lemma" in tgt_terms[ids]['type']:
 					if SUPPORTED:
 						doc_f = l2_stanza(tgt_terms[ids].text)
 						tgt_lemma = ' ' + ' '.join([w.lemma for w in doc_f.sentences[0].words]) + ' '
-						terms_l.append(f"{src_terms[ids].text} ||| {src_ids} --> {tgt_lemma} ||| {tgt_ids}")
+						terms_l.append(f"{src_term.text} ||| {src_ids} --> {tgt_lemma} ||| {tgt_ids}")
 			refs[id] = (source, target, terms, terms_l, mod_terms)
 
 	return sources, outputs, refs
